@@ -1,0 +1,55 @@
+---
+---
+
+<button id="lang-switcher" class="lang-btn" aria-label="Switch language">FR</button>
+
+<style>
+  .lang-btn {
+    position: fixed;
+    bottom: var(--pad-x);
+    left: var(--pad-x);
+    z-index: 200;
+
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+
+    font-family: var(--font);
+    font-size: var(--size-header);
+    font-weight: var(--fw-regular);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-caps);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: opacity var(--t-fast);
+  }
+
+  .lang-btn:hover {
+    opacity: 0.7;
+  }
+</style>
+
+<script>
+  const btn = document.getElementById('lang-switcher') as HTMLButtonElement;
+
+  function applyLang(lang: string) {
+    document.documentElement.dataset.lang = lang;
+    localStorage.setItem('sb-lang', lang);
+    btn.textContent = lang === 'fr' ? 'FR' : 'EN';
+  }
+
+  const saved = localStorage.getItem('sb-lang') || 'fr';
+  applyLang(saved);
+
+  btn.addEventListener('click', () => {
+    const next = document.documentElement.dataset.lang === 'fr' ? 'en' : 'fr';
+    applyLang(next);
+  });
+</script>

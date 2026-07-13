@@ -1,0 +1,245 @@
+---
+interface Media {
+  src: string;
+  alt: string;
+}
+
+interface Props {
+  layout: 'full' | 'duo' | 'trio' | 'square' | 'half-right' | 'half-right-natural' | 'duo-fill-right' | 'duo-one-third' | 'centered';
+  images: Media[];
+}
+
+const { layout, images } = Astro.props;
+
+const isVideo = (src: string) => /\.(mp4|webm|mov|ogg)$/i.test(src);
+// GIF : animé nativement, même rendu que vidéo (height: auto, pas de lightbox)
+const isGif   = (src: string) => /\.gif$/i.test(src);
+---
+
+<div class={`img-block img-block--${layout}`}>
+  {images.map((item) => (
+    <figure class="img-block__item">
+      {item.src ? (
+        isVideo(item.src) ? (
+          /* ── Vidéo : lecture auto, boucle, sans son ─────────────── */
+          <video
+            src={item.src}
+            autoplay
+            loop
+            muted
+            playsinline
+            aria-label={item.alt}
+            class="block-media"
+          />
+        ) : isGif(item.src) ? (
+          /* ── GIF animé : loop natif, format préservé, pas de lightbox */
+          <img
+            src={item.src}
+            alt={item.alt}
+            class="block-media"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          /* ── Image fixe avec lightbox ───────────────────────────── */
+          <button
+            class="lb-trigger"
+            data-lb-src={item.src}
+            data-lb-alt={item.alt}
+            aria-label={`Agrandir : ${item.alt}`}
+            type="button"
+          >
+            <img
+              src={item.src}
+              alt={item.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+        )
+      ) : (
+        <div class="img-placeholder" role="img" aria-label={item.alt} />
+      )}
+    </figure>
+  ))}
+</div>
+
+<style>
+  .img-block {
+    display: grid;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .img-block--full              { grid-template-columns: 1fr; }
+  .img-block--duo               { grid-template-columns: repeat(2, 1fr); }
+  .img-block--trio              { grid-template-columns: repeat(3, 1fr); }
+  .img-block--square            { grid-template-columns: 1fr; }
+  .img-block--half-right        { grid-template-columns: repeat(2, 1fr); }
+  .img-block--half-right-natural { grid-template-columns: repeat(2, 1fr); }
+  .img-block--duo-fill-right    { grid-template-columns: repeat(2, 1fr); align-items: stretch; }
+  .img-block--duo-one-third     { grid-template-columns: 1fr 2fr; }
+  .img-block--centered          { display: flex; justify-content: center; padding-block: 4rem; }
+
+  .img-block__item {
+    overflow: hidden;
+    display: block;
+    min-width: 0;
+  }
+
+  /* ── Placeholder gris ─────────────────────────────────────── */
+
+  .img-placeholder {
+    width: 100%;
+    background: #d8d8d8;
+    display: block;
+  }
+
+  .img-block--full .img-placeholder  { aspect-ratio: 16 / 7; }
+  .img-block--duo  .img-placeholder  { aspect-ratio: 4 / 3; }
+  .img-block--trio .img-placeholder  { aspect-ratio: 1 / 1; }
+
+  /* ── Vidéo + GIF : ratio naturel préservé, pas de stretch ── */
+
+  .block-media {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ── Duo-fill-right : gauche taille naturelle, droite remplit la hauteur */
+
+  .img-block--duo-fill-right .img-block__item:last-child {
+    align-self: stretch;
+  }
+
+  .img-block--duo-fill-right .img-block__item:last-child .block-media,
+  .img-block--duo-fill-right .img-block__item:last-child .lb-trigger,
+  .img-block--duo-fill-right .img-block__item:last-child .lb-trigger img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ── Half-right : image carrée collée à droite, vide à gauche */
+
+  .img-block--half-right .img-block__item {
+    grid-column: 2;
+    aspect-ratio: 1 / 1;
+  }
+
+  .img-block--half-right .block-media,
+  .img-block--half-right .lb-trigger img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ── Half-right-natural : collée à droite, taille naturelle (pas de crop) */
+
+  .img-block--half-right-natural .img-block__item {
+    grid-column: 2;
+  }
+
+  /* ── Centered : centré à 60% de largeur, blanc autour */
+
+  .img-block--centered .img-block__item {
+    width: 60%;
+  }
+
+  .img-block--centered .lb-trigger img,
+  .img-block--centered .block-media {
+    width: 100%;
+    height: auto;
+    object-fit: initial;
+  }
+
+  /* ── Duo-one-third : gauche taille naturelle (détermine hauteur), droite zoom */
+
+  .img-block--duo-one-third { align-items: start; }
+
+  /* Gauche (v-3) : proportions naturelles → détermine la hauteur de la rangée */
+  .img-block--duo-one-third .img-block__item:first-child .lb-trigger img,
+  .img-block--duo-one-third .img-block__item:first-child .block-media {
+    width: 100%;
+    height: auto;
+    object-fit: initial;
+  }
+
+  /* Droite (v-4) : remplit la hauteur calculée par JS, zoom centré */
+  .img-block--duo-one-third .img-block__item:last-child {
+    overflow: hidden;
+  }
+
+  .img-block--duo-one-third .img-block__item:last-child .lb-trigger,
+  .img-block--duo-one-third .img-block__item:last-child .lb-trigger img,
+  .img-block--duo-one-third .img-block__item:last-child .block-media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ── Square : zoom centré, aspect-ratio 1/1 forcé ────────── */
+
+  .img-block--square .img-block__item {
+    aspect-ratio: 1 / 1;
+  }
+
+  .img-block--square .block-media,
+  .img-block--square .lb-trigger img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+
+  /* ── Image réelle ───────────────────────────────────────── */
+
+  .lb-trigger {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: zoom-in;
+  }
+
+  .lb-trigger img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity var(--t-fast);
+  }
+
+  .lb-trigger:hover img { opacity: 0.88; }
+
+  /* ── Responsive ──────────────────────────────────────────── */
+
+  @media (max-width: 800px) {
+    .img-block--trio {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .img-block--trio .img-block__item:nth-child(3):last-child {
+      grid-column: 1 / -1;
+    }
+    .img-block--trio .img-block__item:nth-child(3):last-child .img-placeholder {
+      aspect-ratio: 16 / 7;
+    }
+  }
+
+  @media (max-width: 550px) {
+    .img-block--duo,
+    .img-block--trio {
+      grid-template-columns: 1fr;
+    }
+
+    .img-block--trio .img-block__item:nth-child(3):last-child {
+      grid-column: auto;
+    }
+    .img-block--trio .img-block__item:nth-child(3):last-child .img-placeholder {
+      aspect-ratio: 1 / 1;
+    }
+  }
+</style>

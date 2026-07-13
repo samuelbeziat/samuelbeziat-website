@@ -1,0 +1,191 @@
+<!-- Lightbox global — inclure une seule fois dans Base.astro -->
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Visualisation image" hidden>
+  <button class="lb-close" id="lb-close" aria-label="Fermer">&#x2715;</button>
+
+  <button class="lb-arrow lb-prev" id="lb-prev" aria-label="Image précédente">&#x2190;</button>
+  <button class="lb-arrow lb-next" id="lb-next" aria-label="Image suivante">&#x2192;</button>
+
+  <figure class="lb-figure">
+    <img id="lb-img" src="" alt="" draggable="false" />
+  </figure>
+
+  <p class="lb-counter" id="lb-counter" aria-live="polite"></p>
+</div>
+
+<style>
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.97);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+
+  .lightbox:not([hidden]) {
+    opacity: 1;
+  }
+
+  /* hidden mais toujours dans le DOM pour la transition out */
+  .lightbox[hidden] {
+    display: flex; /* on override l'hidden via JS */
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .lb-figure {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #lb-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    user-select: none;
+  }
+
+  /* ── Bouton fermer ─────────────────────────────────────────── */
+
+  .lb-close {
+    position: fixed;
+    top: 1.4rem;
+    right: 1.6rem;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--text);
+    font-family: var(--font);
+    letter-spacing: 0.04em;
+    padding: 0.4rem 0.6rem;
+    transition: opacity var(--t-fast);
+    z-index: 10;
+  }
+
+  .lb-close:hover { opacity: 0.4; }
+
+  /* ── Flèches navigation ────────────────────────────────────── */
+
+  .lb-arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: var(--text);
+    padding: 1rem 1.4rem;
+    transition: opacity var(--t-fast);
+    z-index: 10;
+    font-family: var(--font);
+  }
+
+  .lb-arrow:hover { opacity: 0.4; }
+  .lb-prev { left: 0.6rem; }
+  .lb-next { right: 0.6rem; }
+
+  .lb-arrow[disabled] { opacity: 0.15; cursor: default; }
+
+  /* ── Compteur ──────────────────────────────────────────────── */
+
+  .lb-counter {
+    position: fixed;
+    bottom: 1.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--size-header);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-caps);
+    font-weight: var(--fw-regular);
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox { transition: none; }
+  }
+</style>
+
+<script>
+  const lb      = document.getElementById('lightbox')!;
+  const lbImg   = document.getElementById('lb-img') as HTMLImageElement;
+  const lbCtr   = document.getElementById('lb-counter')!;
+  const btnClose = document.getElementById('lb-close')!;
+  const btnPrev  = document.getElementById('lb-prev') as HTMLButtonElement;
+  const btnNext  = document.getElementById('lb-next') as HTMLButtonElement;
+
+  let imgs: { src: string; alt: string }[] = [];
+  let current = 0;
+
+  function open(index: number, sources: { src: string; alt: string }[]) {
+    imgs    = sources;
+    current = index;
+    lb.removeAttribute('hidden');
+    lb.style.pointerEvents = 'auto';
+    document.body.style.overflow = 'hidden';
+    render();
+    btnClose.focus();
+  }
+
+  function close() {
+    lb.style.pointerEvents = 'none';
+    lb.style.opacity = '0';
+    setTimeout(() => {
+      lb.setAttribute('hidden', '');
+      lb.style.opacity = '';
+    }, 230);
+    document.body.style.overflow = '';
+  }
+
+  function render() {
+    const { src, alt } = imgs[current];
+    lbImg.src = src;
+    lbImg.alt = alt;
+    lbCtr.textContent = `${current + 1} / ${imgs.length}`;
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === imgs.length - 1;
+  }
+
+  btnClose.addEventListener('click', close);
+  btnPrev.addEventListener('click', () => { if (current > 0) { current--; render(); } });
+  btnNext.addEventListener('click', () => { if (current < imgs.length - 1) { current++; render(); } });
+
+  lb.addEventListener('click', (e) => {
+    if (e.target === lb || e.target === (lb.querySelector('.lb-figure'))) close();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (lb.hasAttribute('hidden')) return;
+    if (e.key === 'Escape')      close();
+    if (e.key === 'ArrowLeft'  && current > 0)              { current--; render(); }
+    if (e.key === 'ArrowRight' && current < imgs.length - 1){ current++; render(); }
+  });
+
+  // Écoute les clics sur toutes les images du site
+  document.addEventListener('click', (e) => {
+    const img = (e.target as Element).closest<HTMLElement>('[data-lb-src]');
+    if (!img) return;
+    e.preventDefault();
+
+    // Récupère toutes les images du même groupe (même .img-block ou page)
+    const group = img.closest('.img-block') ?? img.closest('.project-blocks') ?? document;
+    const all = Array.from(
+      (group as Element).querySelectorAll<HTMLElement>('[data-lb-src]')
+    ).map((el) => ({ src: el.dataset.lbSrc!, alt: el.dataset.lbAlt ?? '' }));
+
+    const idx = all.findIndex((x) => x.src === img.dataset.lbSrc);
+    open(idx >= 0 ? idx : 0, all);
+  });
+</script>

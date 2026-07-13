@@ -1,0 +1,112 @@
+---
+const path = Astro.url.pathname;
+const isAbout = path.startsWith('/about');
+---
+
+<header class="site-header">
+
+  <!-- 1 — Logo -->
+  <a href="/" class="hd-logo">SAMUEL BEZIAT</a>
+
+  <!-- 2 — WORK -->
+  <a href="/" class:list={['hd-link', { 'is-active': !isAbout }]}>WORK</a>
+
+  <!-- 3 — ABOUT -->
+  <a href="/about" class:list={['hd-link', { 'is-active': isAbout }]}>ABOUT</a>
+
+  <!-- 4 — CONTACT -->
+  <div class="hd-block">
+    <span>CONTACT</span>
+    <a href="mailto:beziatsamuel@gmail.com" class="hd-sub-link">BEZIATSAMUEL@GMAIL.COM</a>
+  </div>
+
+  <!-- 5 — SOCIAL -->
+  <div class="hd-block">
+    <a href="https://www.linkedin.com/in/samuel-beziat18/" target="_blank" rel="noopener noreferrer" class="hd-sub-link">LINKEDIN</a>
+    <a href="https://www.instagram.com/samuelbeziat_" target="_blank" rel="noopener noreferrer" class="hd-sub-link">IG</a>
+  </div>
+
+  <!-- 6 — SERVICES -->
+  <div class="hd-block" aria-hidden="true">
+    <span>BRAND IDENTITY</span>
+    <span>PROPS DESIGN</span>
+  </div>
+
+</header>
+
+<style>
+  .site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: var(--header-h);
+    padding: 0.65rem var(--pad-x) 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    font-size: var(--size-header);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-caps);
+    font-weight: var(--fw-regular);
+  }
+
+  /* Tous les enfants directs : flex colonne, aligné à gauche, SANS overflow: hidden
+     (overflow: hidden clippait les pseudo-éléments ::after des liens) */
+  .site-header > * {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+    align-items: flex-start;
+    white-space: nowrap;
+  }
+
+  /* ── Animation hover : underline glisse depuis la gauche ────── */
+
+  .hd-logo,
+  .hd-link,
+  .hd-sub-link {
+    position: relative;
+    display: inline-block;
+  }
+
+  .hd-logo::after,
+  .hd-link::after,
+  .hd-sub-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 220ms ease;
+  }
+
+  .hd-logo:hover::after,
+  .hd-link:hover::after,
+  .hd-sub-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* Lien actif : underline fixe dès le rendu */
+  .hd-link.is-active::after {
+    transform: scaleX(1);
+    transition: none;
+  }
+
+  .hd-logo { font-weight: var(--fw-regular); }
+
+  .hd-link {
+    font-weight: var(--fw-regular);
+    flex-direction: row;
+  }
+
+  /* ── Mobile : cache les 3 derniers blocs ─────────────────────── */
+
+  @media (max-width: 900px) {
+    .site-header > *:nth-child(n+4) { display: none; }
+  }
+</style>

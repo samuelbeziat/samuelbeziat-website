@@ -1,0 +1,121 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Lightbox from '../components/Lightbox.astro';
+import LangSwitcher from '../components/LangSwitcher.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = 'Samuel Beziat — Graphiste, Brand Identity & Props Design',
+  ogImage = '/og.jpg',
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={ogImage} />
+    <meta property="og:type"        content="website" />
+
+    <link rel="preload" href="/fonts/HenryTrial-Regular.otf" as="font" type="font/otf" crossorigin />
+    <link rel="preload" href="/fonts/HenryTrial-Italic.otf" as="font" type="font/otf" crossorigin />
+    <link rel="preload" href="/fonts/MuotoTrial-Light.otf" as="font" type="font/otf" crossorigin />
+    <link rel="preload" href="/fonts/MuotoTrialVAR.ttf" as="font" type="font/truetype" crossorigin />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <title>{title}</title>
+    <!-- Anti-flash : applique la langue sauvegardée avant le premier rendu -->
+    <script is:inline>
+      document.documentElement.dataset.lang = localStorage.getItem('sb-lang') || 'fr';
+    </script>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <Lightbox />
+    <LangSwitcher />
+
+    <script is:inline>
+      /* ── Scroll premium desktop ────────────────────────────────────
+       * Interception du wheel pour appliquer une friction douce :
+       * - MULTIPLIER 0.70 : chaque cran de molette déplace moins
+       *   qu'en natif → "difficile à lancer", pas de dérive rapide
+       * - FRICTION 0.11 : lerp vers la cible — décélération naturelle
+       *   sans trop glisser
+       * Desktop uniquement (pointer:fine = souris ou trackpad précis).
+       * Touch et prefers-reduced-motion → scroll natif inchangé.
+       */
+      (function () {
+        if (
+          !window.matchMedia('(pointer: fine)').matches ||
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ) return;
+
+        var current = window.scrollY;
+        var target  = window.scrollY;
+        var rafId   = null;
+
+        var FRICTION   = 0.50;  // Ajuster ici si trop lent (monter) ou trop glissant (baisser)
+        var MULTIPLIER = 0.40;  // Sensibilité roue — plus bas = plus difficile à lancer
+
+        function tick() {
+          var diff = target - current;
+          if (Math.abs(diff) < 0.1) {
+            current = target;
+            window.scrollTo(0, current);
+            rafId = null;
+            return;
+          }
+          current += diff * FRICTION;
+          window.scrollTo(0, current);
+          rafId = requestAnimationFrame(tick);
+        }
+
+        function schedule() {
+          if (!rafId) rafId = requestAnimationFrame(tick);
+        }
+
+        window.addEventListener('wheel', function (e) {
+          e.preventDefault();
+          var max = document.documentElement.scrollHeight - window.innerHeight;
+          target = Math.max(0, Math.min(max, target + e.deltaY * MULTIPLIER));
+          schedule();
+        }, { passive: false });
+
+        /* Touches clavier */
+        window.addEventListener('keydown', function (e) {
+          var max = document.documentElement.scrollHeight - window.innerHeight;
+          var step = 72;
+          if (e.key === 'ArrowDown')  { e.preventDefault(); target = Math.min(max, target + step); schedule(); }
+          if (e.key === 'ArrowUp')    { e.preventDefault(); target = Math.max(0, target - step); schedule(); }
+          if (e.key === 'PageDown')   { e.preventDefault(); target = Math.min(max, target + window.innerHeight * 0.88); schedule(); }
+          if (e.key === 'PageUp')     { e.preventDefault(); target = Math.max(0, target - window.innerHeight * 0.88); schedule(); }
+          if (e.key === 'End')        { e.preventDefault(); target = max; schedule(); }
+          if (e.key === 'Home')       { e.preventDefault(); target = 0; schedule(); }
+        });
+
+        /* Resynchronisation si le scroll change en dehors du script
+           (liens d'ancrage, raccourcis navigateur, etc.) */
+        window.addEventListener('scroll', function () {
+          if (!rafId) { current = window.scrollY; target = window.scrollY; }
+        }, { passive: true });
+      })();
+    </script>
+  </body>
+</html>

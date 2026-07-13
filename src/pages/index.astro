@@ -1,0 +1,306 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const allProjects = await getCollection('projects');
+const projects = allProjects
+  .filter((p) => !p.data.hidden)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base title="Samuel Beziat — Brand Identity & Props Design">
+  <section class="home" aria-label="Projets">
+
+    <ul class="project-list" id="project-list">
+      {projects.map((project) => (
+        <li class="project-item" data-slug={project.slug}>
+
+          <span class="project-year" aria-hidden="true">{project.data.year}</span>
+
+          <a
+            href={`/work/${project.slug}`}
+            class="project-name"
+            aria-label={`Voir ${project.data.title}`}
+          >
+            {project.data.title}
+          </a>
+
+          <span class="project-tags" aria-hidden="true">
+            {project.data.tags.join(' — ')}
+          </span>
+
+        </li>
+      ))}
+    </ul>
+
+    {projects.map((project) => {
+      const isVideo = (src: string) => /\.(mp4|webm|mov|ogg)$/i.test(src);
+      const isGif   = (src: string) => /\.gif$/i.test(src);
+      const mediaSrcs = [
+        ...(project.data.cover ? [project.data.cover] : []),
+        ...project.data.blocks
+          .flatMap((b: any) => b.images)
+          .map((img: any) => img.src)
+          .filter((src: string) => src && src.length > 0 && !isGif(src)),
+      ];
+      return (
+        <div class="preview-bg" data-slug={project.slug} aria-hidden="true">
+          {mediaSrcs.map((src: string) =>
+            isVideo(src) ? (
+              // preload="none" : rien chargé tant que la vidéo n'est pas activée
+              <video src={src} class="preview-bg-media" autoplay loop muted playsinline preload="none" />
+            ) : (
+              <img src={src} alt="" class="preview-bg-media" loading="eager" decoding="async" />
+            )
+          )}
+        </div>
+      );
+    })}
+
+  </section>
+</Base>
+
+<style>
+  .home {
+    height: calc(100dvh - var(--header-h));
+    display: flex;
+    align-items: center;
+    padding: 0 var(--pad-x);
+    position: relative;
+  }
+
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    z-index: 10; /* au-dessus de la preview background */
+  }
+
+  .project-item {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: baseline;
+    line-height: var(--lh-display);
+    /*
+     * +4px de padding vertical + -4px de margin = la hitbox s'étend au-delà
+     * du bord de chaque item et recouvre l'item adjacent.
+     * Résultat : il n'existe aucun pixel entre deux hitboxes.
+     */
+    padding-block: 4px;
+    margin-block: -4px;
+    position: relative;
+    z-index: 0;
+  }
+
+  .project-year {
+    font-family: var(--font);
+    font-size: var(--size-header);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-caps);
+    font-weight: var(--fw-regular);
+    color: var(--text);
+    opacity: 0;
+    transition: opacity 360ms ease;
+    text-align: right;
+    padding-right: 1.4rem;
+    align-self: center;
+  }
+
+  .project-name {
+    font-family: var(--font-henry);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.8rem, min(7.2vw, 9.5vh), 8rem);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-tight);
+    color: var(--text);
+    display: block;
+    white-space: nowrap;
+    /*
+     * Transition longue sur opacity → animation douce et lisible.
+     * Pas de transition sur font-weight : le bold bascule en 1 frame
+     * (pas de "deux items bold en même temps" qui créait le flicker).
+     */
+    transition: opacity 360ms ease;
+  }
+
+  .project-tags {
+    font-family: var(--font);
+    font-size: var(--size-header);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-caps);
+    font-weight: var(--fw-regular);
+    color: var(--text);
+    opacity: 0;
+    transition: opacity 360ms ease;
+    white-space: nowrap;
+    text-align: left;
+    padding-left: 1.4rem;
+    align-self: center;
+  }
+
+  /* ── États hover gérés par JS ────────────────────────────────
+   * Classes ajoutées/retirées par mouseenter + debounce (voir script).
+   * Le debounce de 60ms bloque toute oscillation à la frontière
+   * entre deux items : il faut rester 60ms sur le nouvel item
+   * avant que ça bascule.
+   */
+  .project-list.is-hovering .project-item:not(.is-current) .project-name {
+    opacity: 0.12;
+  }
+
+  .project-item.is-current {
+    z-index: 1; /* garantit que la hitbox de l'item actif est au-dessus */
+  }
+
+  .project-item.is-current .project-name {
+    font-weight: 400;
+    font-style: normal;
+    opacity: 1;
+  }
+
+  .project-item.is-current .project-year,
+  .project-item.is-current .project-tags {
+    opacity: 1;
+  }
+
+  /* ── Preview background centré, tournant ──────────────────── */
+
+  .preview-bg {
+    position: fixed;
+    inset: 0;
+    display: none;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .preview-bg.is-active { display: block; }
+
+  .preview-bg-media {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    max-width: 52vw;
+    max-height: 52vh;
+    width: auto;
+    height: auto;
+    opacity: 0;
+    transition: opacity 400ms ease;
+  }
+
+  .preview-bg-media.is-visible { opacity: 1; }
+
+  /* ── Mobile ─────────────────────────────────────────────────── */
+
+  @media (max-width: 768px) {
+    .home {
+      height: auto;
+      min-height: calc(100dvh - var(--header-h));
+      align-items: flex-start;
+      padding-top: clamp(2rem, 5vh, 4rem);
+    }
+
+    .preview-bg { display: none !important; }
+
+    .project-item {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      padding-block: 0;
+      margin-block: 0;
+    }
+
+    .project-year,
+    .project-tags { display: none; }
+
+    .project-name {
+      font-size: clamp(2rem, 10vw, 4.5rem);
+      text-align: center;
+      white-space: normal;
+    }
+  }
+
+</style>
+
+<script>
+  const list  = document.getElementById('project-list')!;
+  const items = Array.from(list.querySelectorAll<HTMLElement>('.project-item'));
+  const bgLayers = Array.from(document.querySelectorAll<HTMLElement>('.preview-bg'));
+
+  /* ── Preview background : image aléatoire du projet, tourne ─── */
+
+  let activeBg:    HTMLElement | null = null;
+  let activeMedia: HTMLElement | null = null;
+
+  function showBg(slug: string) {
+    const layer = bgLayers.find(l => l.dataset.slug === slug);
+
+    // Cacher le média précédent si on change de projet
+    if (activeBg && activeBg !== layer) {
+      activeBg.classList.remove('is-active');
+      if (activeMedia) { activeMedia.classList.remove('is-visible'); activeMedia = null; }
+    }
+
+    if (!layer) return;
+
+    const allMedia = Array.from(layer.querySelectorAll<HTMLElement>('.preview-bg-media'));
+    if (allMedia.length === 0) return;
+
+    // Choisir un média aléatoire différent de l'actuel si possible
+    let pick = allMedia[Math.floor(Math.random() * allMedia.length)];
+    if (allMedia.length > 1 && pick === activeMedia) {
+      pick = allMedia[(allMedia.indexOf(pick) + 1) % allMedia.length];
+    }
+
+    if (activeMedia && activeMedia !== pick) {
+      activeMedia.classList.remove('is-visible');
+    }
+
+    activeMedia = pick;
+    layer.classList.add('is-active');
+    activeBg = layer;
+
+    pick.classList.add('is-visible');
+  }
+
+  function hideBg() {
+    if (activeMedia) { activeMedia.classList.remove('is-visible'); activeMedia = null; }
+    if (activeBg)    { activeBg.classList.remove('is-active');    activeBg = null; }
+  }
+
+  /* ── Machine à états avec debounce 60ms ──────────────────────── */
+
+  let currentItem:  HTMLElement | null = null;
+  let switchTimer:  ReturnType<typeof setTimeout> | null = null;
+
+  function activate(item: HTMLElement) {
+    if (item === currentItem) return;
+    if (currentItem) currentItem.classList.remove('is-current');
+    currentItem = item;
+    item.classList.add('is-current');
+    list.classList.add('is-hovering');
+    const slug = item.dataset.slug;
+    if (slug) showBg(slug);
+  }
+
+  function deactivateAll() {
+    if (switchTimer) { clearTimeout(switchTimer); switchTimer = null; }
+    if (currentItem) { currentItem.classList.remove('is-current'); currentItem = null; }
+    list.classList.remove('is-hovering');
+    hideBg();
+  }
+
+  items.forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      if (switchTimer) { clearTimeout(switchTimer); switchTimer = null; }
+      if (!currentItem) {
+        activate(item);
+      } else {
+        switchTimer = setTimeout(() => { switchTimer = null; activate(item); }, 60);
+      }
+    });
+  });
+
+  list.addEventListener('mouseleave', deactivateAll);
+</script>

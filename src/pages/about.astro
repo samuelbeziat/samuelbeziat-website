@@ -1,0 +1,166 @@
+---
+import Base from '../layouts/Base.astro';
+
+const bioFr = `Designer graphique junior basé à Biarritz, France, spécialisé en identité de marque, je crée des univers visuels pour des projets réels comme pour des mondes fictifs. J'aime construire des systèmes graphiques épurés et lisibles, où la couleur vient donner du caractère sans jamais nuire à la clarté.
+
+Bien vous écouter pour bien vous traduire.`;
+
+const bioEn = `Junior graphic designer based in Biarritz, France, specialised in brand identity, I create visual worlds for both real projects and fictional universes. I love building clean, legible graphic systems where colour brings character without ever getting in the way of clarity.
+
+Listening closely to translate you clearly.`;
+---
+
+<Base
+  title="À propos — Samuel Beziat"
+  description="Samuel Beziat, graphiste spécialisé en Brand Identity et Props Design."
+>
+  <section class="about">
+
+    <div class="portrait-outer">
+      <div class="portrait-inner" id="portrait-inner">
+        <img src="/images/portrait.jpg" alt="Samuel Beziat" />
+      </div>
+    </div>
+
+    <p class="about-bio" data-lang-fr style="white-space: pre-line">{bioFr}</p>
+    <p class="about-bio" data-lang-en style="white-space: pre-line">{bioEn}</p>
+
+  </section>
+</Base>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: clamp(3rem, 6vh, 6rem) var(--pad-x) 0;
+  }
+
+  .portrait-outer {
+    width: min(44vw, 480px);
+    margin-bottom: 3rem;
+    perspective: 900px;
+  }
+
+  .portrait-inner {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.08s ease-out;
+    will-change: transform;
+    /* Ombre portée — suit la rotation de la carte */
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.10);
+  }
+
+  /* Overlay holographique ultra kitsch */
+  .portrait-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background-image:
+      /* Reflet lumineux suivant la souris */
+      radial-gradient(
+        ellipse 65% 50% at calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%),
+        rgba(255, 255, 255, 0.40) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        transparent 70%
+      ),
+      /* Foil arc-en-ciel */
+      linear-gradient(
+        var(--holo-angle, 130deg),
+        rgba(255,  60, 110, 0.55)  0%,
+        rgba(255, 170,  40, 0.48) 18%,
+        rgba( 50, 210,  90, 0.48) 36%,
+        rgba( 40, 170, 255, 0.48) 54%,
+        rgba(140,  50, 255, 0.55) 72%,
+        rgba(255,  60, 190, 0.55) 88%,
+        rgba(255,  60, 110, 0.55) 100%
+      );
+    mix-blend-mode: color-dodge;
+    opacity: var(--holo-opacity, 0);
+    transition: opacity 0.6s ease;
+    animation: holo-hue 4s linear infinite;
+  }
+
+  @keyframes holo-hue {
+    from { filter: hue-rotate(0deg)   brightness(1.1); }
+    to   { filter: hue-rotate(360deg) brightness(1.1); }
+  }
+
+  /* Dos de la carte en 3D — visible uniquement quand la carte pivote */
+  .portrait-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #d4ccc0;
+    transform: translateZ(-14px);
+    pointer-events: none;
+  }
+
+  .portrait-inner img {
+    width: 100%;
+    height: auto;
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+
+  .about-bio {
+    font-size: var(--size-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-light);
+    max-width: 54ch;
+    text-align: center;
+    color: var(--text);
+  }
+
+  @media (max-width: 768px) {
+    .portrait-outer { width: min(78vw, 360px); }
+  }
+</style>
+
+<script>
+  const inner    = document.getElementById('portrait-inner')!;
+  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!noMotion) {
+    /* 1 chance sur 5 d'avoir l'effet holographique */
+    const holoEnabled = Math.random() < 0.333;
+
+    window.addEventListener('mousemove', (e: MouseEvent) => {
+      const dx = (e.clientX / window.innerWidth  - 0.5) * 2;
+      const dy = (e.clientY / window.innerHeight - 0.5) * 2;
+      inner.style.transform = `rotateX(${-dy * 25}deg) rotateY(${dx * 25}deg)`;
+
+      if (holoEnabled) {
+        inner.style.setProperty('--mx',           String(e.clientX / window.innerWidth));
+        inner.style.setProperty('--my',           String(e.clientY / window.innerHeight));
+        inner.style.setProperty('--holo-angle',   `${120 + dx * 65}deg`);
+        inner.style.setProperty('--holo-opacity', '0.88');
+      }
+    });
+
+    window.addEventListener('mouseleave', () => {
+      inner.style.setProperty('--holo-opacity', '0');
+    });
+
+    /* Tilt tactile — même logique avec le doigt */
+    window.addEventListener('touchmove', (e: TouchEvent) => {
+      if (e.touches.length === 0) return;
+      const touch = e.touches[0];
+      const dx = (touch.clientX / window.innerWidth  - 0.5) * 2;
+      const dy = (touch.clientY / window.innerHeight - 0.5) * 2;
+      inner.style.transform = `rotateX(${-dy * 25}deg) rotateY(${dx * 25}deg)`;
+    }, { passive: true });
+
+    /* Remet à plat quand on lève le doigt */
+    window.addEventListener('touchend', () => {
+      inner.style.transition = 'transform 0.4s ease-out';
+      inner.style.transform  = 'rotateX(0deg) rotateY(0deg)';
+      setTimeout(() => {
+        inner.style.transition = 'transform 0.08s ease-out';
+      }, 400);
+    }, { passive: true });
+  }
+</script>
