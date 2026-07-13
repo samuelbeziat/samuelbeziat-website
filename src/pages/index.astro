@@ -48,10 +48,10 @@ const projects = allProjects
         <div class="preview-bg" data-slug={project.slug} aria-hidden="true">
           {mediaSrcs.map((src: string) =>
             isVideo(src) ? (
-              // preload="none" : rien chargé tant que la vidéo n'est pas activée
-              <video src={withBase(src)} class="preview-bg-media" autoplay loop muted playsinline preload="none" />
+              // pas de src/autoplay statique : chargé et lancé au survol uniquement (voir script)
+              <video data-src={withBase(src)} class="preview-bg-media" loop muted playsinline preload="none" />
             ) : (
-              <img src={withBase(src)} alt="" class="preview-bg-media" loading="eager" decoding="async" />
+              <img data-src={withBase(src)} alt="" class="preview-bg-media" loading="lazy" decoding="async" />
             )
           )}
         </div>
@@ -234,13 +234,24 @@ const projects = allProjects
   let activeBg:    HTMLElement | null = null;
   let activeMedia: HTMLElement | null = null;
 
+  // Coupe le chargement/lecture et libère la mémoire (surtout pour les vidéos,
+  // qui peuvent peser plusieurs dizaines de Mo pièce)
+  function unloadMedia(media: HTMLElement) {
+    media.classList.remove('is-visible');
+    if (media instanceof HTMLVideoElement) {
+      media.pause();
+      media.removeAttribute('src');
+      media.load();
+    }
+  }
+
   function showBg(slug: string) {
     const layer = bgLayers.find(l => l.dataset.slug === slug);
 
     // Cacher le média précédent si on change de projet
     if (activeBg && activeBg !== layer) {
       activeBg.classList.remove('is-active');
-      if (activeMedia) { activeMedia.classList.remove('is-visible'); activeMedia = null; }
+      if (activeMedia) { unloadMedia(activeMedia); activeMedia = null; }
     }
 
     if (!layer) return;
@@ -255,18 +266,28 @@ const projects = allProjects
     }
 
     if (activeMedia && activeMedia !== pick) {
-      activeMedia.classList.remove('is-visible');
+      unloadMedia(activeMedia);
     }
 
     activeMedia = pick;
     layer.classList.add('is-active');
     activeBg = layer;
 
+    // Un seul média chargé à la fois : le src n'est posé qu'au moment choisi
+    const src = pick.dataset.src;
+    if (src && !pick.getAttribute('src')) {
+      pick.setAttribute('src', src);
+      if (pick instanceof HTMLVideoElement) pick.load();
+    }
+
+    if (pick instanceof HTMLVideoElement) {
+      pick.play().catch(() => {});
+    }
     pick.classList.add('is-visible');
   }
 
   function hideBg() {
-    if (activeMedia) { activeMedia.classList.remove('is-visible'); activeMedia = null; }
+    if (activeMedia) { unloadMedia(activeMedia); activeMedia = null; }
     if (activeBg)    { activeBg.classList.remove('is-active');    activeBg = null; }
   }
 
@@ -274,6 +295,7 @@ const projects = allProjects
 
   let currentItem:  HTMLElement | null = null;
   let switchTimer:  ReturnType<typeof setTimeout> | null = null;
+  let loadTimer:    ReturnType<typeof setTimeout> | null = null;
 
   function activate(item: HTMLElement) {
     if (item === currentItem) return;
@@ -281,12 +303,20 @@ const projects = allProjects
     currentItem = item;
     item.classList.add('is-current');
     list.classList.add('is-hovering');
+
+    // Petit délai avant de charger le média lourd : un simple survol de
+    // passage (scan rapide de la liste) ne déclenche aucun téléchargement
+    if (loadTimer) clearTimeout(loadTimer);
     const slug = item.dataset.slug;
-    if (slug) showBg(slug);
+    loadTimer = setTimeout(() => {
+      loadTimer = null;
+      if (slug && currentItem === item) showBg(slug);
+    }, 150);
   }
 
   function deactivateAll() {
     if (switchTimer) { clearTimeout(switchTimer); switchTimer = null; }
+    if (loadTimer)   { clearTimeout(loadTimer);   loadTimer = null; }
     if (currentItem) { currentItem.classList.remove('is-current'); currentItem = null; }
     list.classList.remove('is-hovering');
     hideBg();
