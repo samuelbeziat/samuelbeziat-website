@@ -3,6 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Lightbox from '../components/Lightbox.astro';
 import LangSwitcher from '../components/LangSwitcher.astro';
+import { withBase } from '../utils/url';
 import '../styles/global.css';
 
 interface Props {
@@ -14,7 +15,7 @@ interface Props {
 const {
   title,
   description = 'Samuel Beziat — Graphiste, Brand Identity & Props Design',
-  ogImage = '/og.jpg',
+  ogImage = withBase('/og.jpg'),
 } = Astro.props;
 ---
 
@@ -30,11 +31,11 @@ const {
     <meta property="og:image"       content={ogImage} />
     <meta property="og:type"        content="website" />
 
-    <link rel="preload" href="/fonts/HenryTrial-Regular.otf" as="font" type="font/otf" crossorigin />
-    <link rel="preload" href="/fonts/HenryTrial-Italic.otf" as="font" type="font/otf" crossorigin />
-    <link rel="preload" href="/fonts/MuotoTrial-Light.otf" as="font" type="font/otf" crossorigin />
-    <link rel="preload" href="/fonts/MuotoTrialVAR.ttf" as="font" type="font/truetype" crossorigin />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href={withBase('/fonts/HenryTrial-Regular.otf')} as="font" type="font/otf" crossorigin />
+    <link rel="preload" href={withBase('/fonts/HenryTrial-Italic.otf')} as="font" type="font/otf" crossorigin />
+    <link rel="preload" href={withBase('/fonts/MuotoTrial-Light.otf')} as="font" type="font/otf" crossorigin />
+    <link rel="preload" href={withBase('/fonts/MuotoTrialVAR.ttf')} as="font" type="font/truetype" crossorigin />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
 
     <title>{title}</title>
     <!-- Anti-flash : applique la langue sauvegardée avant le premier rendu -->

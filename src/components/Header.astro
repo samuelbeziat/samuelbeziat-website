@@ -1,18 +1,18 @@
 ---
-const path = Astro.url.pathname;
-const isAbout = path.startsWith('/about');
+import { withBase } from '../utils/url';
+const isAbout = Astro.url.pathname.includes('/about');
 ---
 
 <header class="site-header">
 
   <!-- 1 — Logo -->
-  <a href="/" class="hd-logo">SAMUEL BEZIAT</a>
+  <a href={withBase('/')} class="hd-logo">SAMUEL BEZIAT</a>
 
   <!-- 2 — WORK -->
-  <a href="/" class:list={['hd-link', { 'is-active': !isAbout }]}>WORK</a>
+  <a href={withBase('/')} class:list={['hd-link', { 'is-active': !isAbout }]}>WORK</a>
 
   <!-- 3 — ABOUT -->
-  <a href="/about" class:list={['hd-link', { 'is-active': isAbout }]}>ABOUT</a>
+  <a href={withBase('/about')} class:list={['hd-link', { 'is-active': isAbout }]}>ABOUT</a>
 
   <!-- 4 — CONTACT -->
   <div class="hd-block">

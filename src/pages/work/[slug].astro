@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ImageBlock from '../../components/ImageBlock.astro';
+import { withBase } from '../../utils/url';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -58,7 +59,7 @@ const otherProjects = allProjects
           <ul class="other-list" id="other-list">
             {otherProjects.map((p) => (
               <li class="other-item" style="display:none">
-                <a href={`/work/${p.slug}`} class="other-link">
+                <a href={withBase(`/work/${p.slug}`)} class="other-link">
                   <span class="other-name">{p.data.title}</span>
                   <span class="other-meta">
                     {p.data.year} — {p.data.tags.join(' / ')}

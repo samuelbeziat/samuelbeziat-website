@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { withBase } from '../utils/url';
 
 const bioFr = `Designer graphique junior basé à Biarritz, France, spécialisé en identité de marque, je crée des univers visuels pour des projets réels comme pour des mondes fictifs. J'aime construire des systèmes graphiques épurés et lisibles, où la couleur vient donner du caractère sans jamais nuire à la clarté.
 
@@ -18,7 +19,7 @@ Listening closely to translate you clearly.`;
 
     <div class="portrait-outer">
       <div class="portrait-inner" id="portrait-inner">
-        <img src="/images/portrait.jpg" alt="Samuel Beziat" />
+        <img src={withBase('/images/portrait.jpg')} alt="Samuel Beziat" />
       </div>
     </div>
 

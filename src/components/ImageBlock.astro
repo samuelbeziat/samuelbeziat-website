@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../utils/url';
+
 interface Media {
   src: string;
   alt: string;
@@ -23,7 +25,7 @@ const isGif   = (src: string) => /\.gif$/i.test(src);
         isVideo(item.src) ? (
           /* ── Vidéo : lecture auto, boucle, sans son ─────────────── */
           <video
-            src={item.src}
+            src={withBase(item.src)}
             autoplay
             loop
             muted
@@ -34,7 +36,7 @@ const isGif   = (src: string) => /\.gif$/i.test(src);
         ) : isGif(item.src) ? (
           /* ── GIF animé : loop natif, format préservé, pas de lightbox */
           <img
-            src={item.src}
+            src={withBase(item.src)}
             alt={item.alt}
             class="block-media"
             loading="lazy"
@@ -44,13 +46,13 @@ const isGif   = (src: string) => /\.gif$/i.test(src);
           /* ── Image fixe avec lightbox ───────────────────────────── */
           <button
             class="lb-trigger"
-            data-lb-src={item.src}
+            data-lb-src={withBase(item.src)}
             data-lb-alt={item.alt}
             aria-label={`Agrandir : ${item.alt}`}
             type="button"
           >
             <img
-              src={item.src}
+              src={withBase(item.src)}
               alt={item.alt}
               loading="lazy"
               decoding="async"

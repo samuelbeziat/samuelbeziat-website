@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { withBase } from '../utils/url';
 import { getCollection } from 'astro:content';
 
 const allProjects = await getCollection('projects');
@@ -18,7 +19,7 @@ const projects = allProjects
           <span class="project-year" aria-hidden="true">{project.data.year}</span>
 
           <a
-            href={`/work/${project.slug}`}
+            href={withBase(`/work/${project.slug}`)}
             class="project-name"
             aria-label={`Voir ${project.data.title}`}
           >
@@ -48,9 +49,9 @@ const projects = allProjects
           {mediaSrcs.map((src: string) =>
             isVideo(src) ? (
               // preload="none" : rien chargé tant que la vidéo n'est pas activée
-              <video src={src} class="preview-bg-media" autoplay loop muted playsinline preload="none" />
+              <video src={withBase(src)} class="preview-bg-media" autoplay loop muted playsinline preload="none" />
             ) : (
-              <img src={src} alt="" class="preview-bg-media" loading="eager" decoding="async" />
+              <img src={withBase(src)} alt="" class="preview-bg-media" loading="eager" decoding="async" />
             )
           )}
         </div>
