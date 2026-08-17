@@ -6,7 +6,10 @@ const isAbout = Astro.url.pathname.includes('/about');
 <header class="site-header">
 
   <!-- 1 — Logo -->
-  <a href={withBase('/')} class="hd-logo">SAMUEL BEZIAT</a>
+  <a href={withBase('/')} class="hd-logo">
+    <img src={withBase('/images/logo.svg')} alt="" class="hd-logo-mark" width="16" height="14" />
+    SAMUEL BEZIAT
+  </a>
 
   <!-- 2 — WORK -->
   <a href={withBase('/')} class:list={['hd-link', { 'is-active': !isAbout }]}>WORK</a>
@@ -97,7 +100,19 @@ const isAbout = Astro.url.pathname.includes('/about');
     transition: none;
   }
 
-  .hd-logo { font-weight: var(--fw-regular); }
+  .hd-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: var(--fw-regular);
+  }
+
+  .hd-logo-mark {
+    display: block;
+    width: 0.85em;
+    height: auto;
+    flex-shrink: 0;
+  }
 
   .hd-link {
     font-weight: var(--fw-regular);
