@@ -14,9 +14,31 @@ interface Props {
 
 const {
   title,
-  description = 'Samuel Beziat — Graphiste, Brand Identity & Props Design',
-  ogImage = withBase('/og.jpg'),
+  description = 'Samuel Beziat, graphiste et directeur artistique basé à Biarritz (BAB). Identité de marque, props design et univers graphiques sur mesure.',
+  ogImage = withBase('/images/portrait.jpg'),
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const absoluteOgImage = new URL(ogImage, Astro.site);
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Samuel Beziat',
+  jobTitle: 'Graphiste / Directeur artistique',
+  url: 'https://samuelbeziat.com',
+  image: absoluteOgImage.toString(),
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Biarritz',
+    addressRegion: 'Nouvelle-Aquitaine',
+    addressCountry: 'FR',
+  },
+  sameAs: [
+    'https://www.linkedin.com/in/samuel-beziat18/',
+    'https://www.instagram.com/samuelbeziat_',
+  ],
+};
 ---
 
 <!DOCTYPE html>
@@ -25,11 +47,21 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
 
     <meta property="og:title"       content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image"       content={ogImage} />
+    <meta property="og:image"       content={absoluteOgImage} />
+    <meta property="og:url"         content={canonicalURL} />
     <meta property="og:type"        content="website" />
+    <meta property="og:locale"      content="fr_FR" />
+
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={absoluteOgImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
 
     <link rel="preload" href={withBase('/fonts/HenryTrial-Regular.otf')} as="font" type="font/otf" crossorigin />
     <link rel="preload" href={withBase('/fonts/HenryTrial-Italic.otf')} as="font" type="font/otf" crossorigin />
@@ -40,7 +72,9 @@ const {
     <title>{title}</title>
     <!-- Anti-flash : applique la langue sauvegardée avant le premier rendu -->
     <script is:inline>
-      document.documentElement.dataset.lang = localStorage.getItem('sb-lang') || 'fr';
+      var savedLang = localStorage.getItem('sb-lang') || 'fr';
+      document.documentElement.dataset.lang = savedLang;
+      document.documentElement.lang = savedLang;
     </script>
   </head>
   <body>

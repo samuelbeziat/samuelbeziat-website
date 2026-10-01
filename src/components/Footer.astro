@@ -1,39 +1,72 @@
 ---
+import Logo from './Logo.astro';
+import { withBase } from '../utils/url';
 const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
 
-  <div class="footer-cta">
-    <p class="footer-tagline">LET'S WORK TOGETHER</p>
+  <div class="footer-flash">
+    <p class="footer-tagline">
+      <span data-lang-fr>TRAVAILLONS ENSEMBLE</span>
+      <span data-lang-en>LET'S WORK TOGETHER</span>
+    </p>
     <a href="mailto:beziatsamuel@gmail.com" class="footer-email">
       BEZIATSAMUEL@GMAIL.COM
     </a>
   </div>
 
-  <div class="footer-bar">
-    <span>SAMUEL BEZIAT</span>
-    <span>{year}</span>
+  <div class="footer-picto" aria-hidden="true">
+    <Logo class="footer-picto-mark" />
   </div>
 
-  <!-- Liens secondaires mobiles : sous la barre, 3 colonnes comme le header -->
-  <nav class="footer-mobile-nav" aria-label="Navigation secondaire">
-    <a href="mailto:beziatsamuel@gmail.com">MAIL</a>
-    <a href="https://www.linkedin.com/in/samuel-beziat18/" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
-    <a href="https://www.instagram.com/samuelbeziat_" target="_blank" rel="noopener noreferrer">IG</a>
+  <nav class="footer-links" aria-label="Navigation secondaire">
+    <div class="footer-col">
+      <a href={withBase('/')}>
+        <span data-lang-fr>TRAVAUX</span>
+        <span data-lang-en>WORK</span>
+      </a>
+      <a href={withBase('/about')}>
+        <span data-lang-fr>À PROPOS</span>
+        <span data-lang-en>ABOUT</span>
+      </a>
+      <a href={withBase('/contact')}>CONTACT</a>
+    </div>
+    <div class="footer-col footer-col--social">
+      <a href="https://www.linkedin.com/in/samuel-beziat18/" target="_blank" rel="noopener noreferrer">LINKEDIN</a>
+      <a href="https://www.instagram.com/samuelbeziat_" target="_blank" rel="noopener noreferrer">INSTAGRAM</a>
+    </div>
+    <div class="footer-col footer-col--meta">
+      <span>BRAND IDENTITY</span>
+      <span>PROPS DESIGN</span>
+      <span class="footer-copy">
+        © SAMUEL BEZIAT {year} ·
+        <a href={withBase('/mentions-legales')} data-lang-fr>MENTIONS LÉGALES</a>
+        <a href={withBase('/mentions-legales')} data-lang-en>LEGAL NOTICE</a>
+      </span>
+    </div>
   </nav>
 
 </footer>
 
 <style>
   .site-footer {
-    padding: 0 var(--pad-x);
     margin-top: var(--section-gap);
+    border-top: 3px solid var(--accent);
   }
 
-  .footer-cta {
+  /* ── Bloc flash : bande plein-écran couleur vive ─────────────── */
+
+  .footer-flash {
+    background: var(--accent);
+    color: var(--accent-ink);
     text-align: center;
-    padding: calc(var(--section-gap) * 0.7) 0 calc(var(--section-gap) * 0.4);
+    min-height: clamp(10rem, 22vh, 16rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem var(--pad-x);
   }
 
   .footer-tagline {
@@ -45,51 +78,86 @@ const year = new Date().getFullYear();
   }
 
   .footer-email {
-    font-size: clamp(1rem, 1.8vw, 1.9rem);
+    font-size: clamp(1.4rem, 2.2vw, 2.3rem);
     font-weight: var(--fw-bold);
     text-transform: uppercase;
     letter-spacing: var(--ls-caps);
     display: inline-block;
-    margin-top: 0.1em;
+    margin-top: 0.3em;
     transition: opacity var(--t-fast);
   }
 
-  .footer-email:hover { opacity: 0.5; }
+  .footer-email:hover { opacity: 0.6; }
 
-  .footer-bar {
+  /* ── Picto géant ─────────────────────────────────────────────── */
+
+  .footer-picto {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.6rem 0 0;
+    justify-content: center;
+    padding: calc(var(--section-gap) * 0.5) var(--pad-x) calc(var(--section-gap) * 0.3);
+  }
+
+  .footer-picto :global(.footer-picto-mark) {
+    height: clamp(3.4rem, 10.6vw, 7.4rem);
+    width: auto;
+    color: var(--text);
+  }
+
+  /* ── Nav 3 colonnes ───────────────────────────────────────────── */
+
+  .footer-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    /* Padding bas généreux : laisse de la place à la pastille de langue
+       (fixed, bottom-left) sans jamais chevaucher le dernier lien */
+    padding: 0 var(--pad-x) calc(var(--section-gap) * 0.5 + 3rem);
     font-size: var(--size-header);
     text-transform: uppercase;
     letter-spacing: var(--ls-caps);
     font-weight: var(--fw-regular);
   }
 
-
-  /* Mobile nav : caché sur desktop */
-  .footer-mobile-nav {
-    display: none;
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
+  .footer-col a {
+    transition: opacity var(--t-fast);
+    width: fit-content;
+  }
+
+  .footer-col a:hover { opacity: 0.5; }
+
+  .footer-col--social {
+    text-align: center;
+    align-items: center;
+  }
+
+  .footer-col--meta {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .footer-copy {
+    margin-top: 0.5rem;
+    opacity: 0.6;
+  }
+
+  /* ── Mobile ───────────────────────────────────────────────────── */
+
   @media (max-width: 900px) {
-    /* 3 colonnes égales, même taille et style que la barre footer.
-       MAIL : sous SAMUEL (gauche)
-       LINKEDIN : centre
-       IG : sous 2026 (droite) */
-    .footer-mobile-nav {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      padding: 0.4rem 0 1.2rem;
-      font-size: var(--size-header);
-      text-transform: uppercase;
-      letter-spacing: var(--ls-caps);
-      font-weight: var(--fw-regular);
+    .footer-links {
+      grid-template-columns: 1fr 1fr;
+      row-gap: 1.5rem;
     }
 
-    .footer-mobile-nav a:nth-child(1) { text-align: left; }
-    .footer-mobile-nav a:nth-child(2) { text-align: center; }
-    .footer-mobile-nav a:nth-child(3) { text-align: right; }
+    .footer-col--meta {
+      grid-column: 1 / -1;
+      text-align: left;
+      align-items: flex-start;
+    }
   }
 </style>

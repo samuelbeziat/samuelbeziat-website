@@ -9,7 +9,11 @@ const projects = allProjects
   .sort((a, b) => a.data.order - b.data.order);
 ---
 
-<Base title="Samuel Beziat — Brand Identity & Props Design">
+<Base
+  title="Samuel Beziat — Graphiste & DA à Biarritz (BAB)"
+  description="Portfolio de Samuel Beziat, graphiste et directeur artistique basé à Biarritz (BAB). Identité de marque, props design, univers graphiques pour projets réels et fictifs."
+>
+  <h1 class="sr-only">Samuel Beziat — Graphiste et Directeur Artistique à Biarritz (BAB)</h1>
   <section class="home" aria-label="Projets">
 
     <ul class="project-list" id="project-list">
@@ -136,9 +140,12 @@ const projects = allProjects
     opacity: 0;
     transition: opacity 360ms ease;
     white-space: nowrap;
-    text-align: left;
-    padding-left: 1.4rem;
+    width: fit-content;
+    justify-self: start;
     align-self: center;
+    margin-left: 1.4rem;
+    padding: 0.3rem 0.65rem;
+    border: 1px solid currentColor;
   }
 
   /* ── États hover gérés par JS ────────────────────────────────

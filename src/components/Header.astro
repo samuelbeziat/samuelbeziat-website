@@ -1,39 +1,30 @@
 ---
+import Logo from './Logo.astro';
 import { withBase } from '../utils/url';
-const isAbout = Astro.url.pathname.includes('/about');
+const path = Astro.url.pathname;
+const isAbout   = path.includes('/about');
+const isContact = path.includes('/contact');
+const isWork    = !isAbout && !isContact;
 ---
 
 <header class="site-header">
 
-  <!-- 1 — Logo -->
   <a href={withBase('/')} class="hd-logo">
-    <img src={withBase('/images/logo.svg')} alt="" class="hd-logo-mark" width="16" height="14" />
-    SAMUEL BEZIAT
+    <Logo class="hd-logo-mark" />
+    <span class="hd-logo-text">SAMUEL BEZIAT</span>
   </a>
 
-  <!-- 2 — WORK -->
-  <a href={withBase('/')} class:list={['hd-link', { 'is-active': !isAbout }]}>WORK</a>
-
-  <!-- 3 — ABOUT -->
-  <a href={withBase('/about')} class:list={['hd-link', { 'is-active': isAbout }]}>ABOUT</a>
-
-  <!-- 4 — CONTACT -->
-  <div class="hd-block">
-    <span>CONTACT</span>
-    <a href="mailto:beziatsamuel@gmail.com" class="hd-sub-link">BEZIATSAMUEL@GMAIL.COM</a>
-  </div>
-
-  <!-- 5 — SOCIAL -->
-  <div class="hd-block">
-    <a href="https://www.linkedin.com/in/samuel-beziat18/" target="_blank" rel="noopener noreferrer" class="hd-sub-link">LINKEDIN</a>
-    <a href="https://www.instagram.com/samuelbeziat_" target="_blank" rel="noopener noreferrer" class="hd-sub-link">IG</a>
-  </div>
-
-  <!-- 6 — SERVICES -->
-  <div class="hd-block" aria-hidden="true">
-    <span>BRAND IDENTITY</span>
-    <span>PROPS DESIGN</span>
-  </div>
+  <nav class="hd-nav">
+    <a href={withBase('/')} class:list={['hd-pill', { 'is-active': isWork }]}>
+      <span data-lang-fr>TRAVAUX</span>
+      <span data-lang-en>WORK</span>
+    </a>
+    <a href={withBase('/about')} class:list={['hd-pill', { 'is-active': isAbout }]}>
+      <span data-lang-fr>À PROPOS</span>
+      <span data-lang-en>ABOUT</span>
+    </a>
+    <a href={withBase('/contact')} class:list={['hd-pill', { 'is-active': isContact }]}>CONTACT</a>
+  </nav>
 
 </header>
 
@@ -41,9 +32,9 @@ const isAbout = Astro.url.pathname.includes('/about');
   .site-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    height: var(--header-h);
-    padding: 0.65rem var(--pad-x) 0;
+    align-items: center;
+    min-height: var(--header-h);
+    padding: 0.65rem var(--pad-x);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -54,75 +45,52 @@ const isAbout = Astro.url.pathname.includes('/about');
     font-weight: var(--fw-regular);
   }
 
-  /* Tous les enfants directs : flex colonne, aligné à gauche, SANS overflow: hidden
-     (overflow: hidden clippait les pseudo-éléments ::after des liens) */
-  .site-header > * {
-    display: flex;
-    flex-direction: column;
-    gap: 0.12rem;
-    align-items: flex-start;
-    white-space: nowrap;
-  }
-
-  /* ── Animation hover : underline glisse depuis la gauche ────── */
-
-  .hd-logo,
-  .hd-link,
-  .hd-sub-link {
-    position: relative;
-    display: inline-block;
-  }
-
-  .hd-logo::after,
-  .hd-link::after,
-  .hd-sub-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: currentColor;
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 220ms ease;
-  }
-
-  .hd-logo:hover::after,
-  .hd-link:hover::after,
-  .hd-sub-link:hover::after {
-    transform: scaleX(1);
-  }
-
-  /* Lien actif : underline fixe dès le rendu */
-  .hd-link.is-active::after {
-    transform: scaleX(1);
-    transition: none;
-  }
+  /* ── Logo : pas d'encadré, picto plus gros ───────────────────── */
 
   .hd-logo {
     display: inline-flex;
-    flex-direction: row;
     align-items: center;
-    gap: 0.4rem;
-    font-weight: var(--fw-regular);
+    gap: 0.5rem;
+    white-space: nowrap;
+    font-weight: var(--fw-light);
   }
 
-  .hd-logo-mark {
+  .hd-logo :global(.hd-logo-mark) {
     display: block;
-    height: 1em;
+    height: 2.2em;
     width: auto;
     flex-shrink: 0;
   }
 
-  .hd-link {
-    font-weight: var(--fw-regular);
-    flex-direction: row;
+  /* ── Nav : encarts carrés, fond plein, pas de contour ────────── */
+
+  .hd-nav {
+    display: flex;
+    gap: 0.5rem;
   }
 
-  /* ── Mobile : cache les 3 derniers blocs ─────────────────────── */
+  .hd-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+    background: rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
+    transition: background var(--t-fast), color var(--t-fast);
+  }
 
-  @media (max-width: 900px) {
-    .site-header > *:nth-child(n+4) { display: none; }
+  .hd-pill:hover,
+  .hd-pill.is-active {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  /* ── Mobile ───────────────────────────────────────────────────── */
+
+  @media (max-width: 480px) {
+    .hd-nav { gap: 0.35rem; }
+    .hd-pill { padding: 0.45rem 0.6rem; }
+    /* Le nom complet + les 3 libellés FR ("À PROPOS") ne tiennent plus
+       sur une seule ligne à cette largeur : on ne garde que le picto. */
+    .hd-logo-text { display: none; }
   }
 </style>

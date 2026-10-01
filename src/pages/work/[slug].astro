@@ -22,7 +22,7 @@ const otherProjects = allProjects
 ---
 
 <Base
-  title={`${title} — Samuel Beziat`}
+  title={`${title} — Samuel Beziat, Biarritz`}
   description={description}
 >
   <article class="project-layout">
@@ -55,7 +55,10 @@ const otherProjects = allProjects
 
       {otherProjects.length > 0 && (
         <section class="other-projects" aria-label="Autres projets">
-          <p class="other-label">OTHER PROJECTS</p>
+          <p class="other-label">
+            <span data-lang-fr>AUTRES PROJETS</span>
+            <span data-lang-en>OTHER PROJECTS</span>
+          </p>
           <ul class="other-list" id="other-list">
             {otherProjects.map((p) => (
               <li class="other-item" style="display:none">
@@ -157,6 +160,10 @@ const otherProjects = allProjects
     letter-spacing: var(--ls-caps);
     font-weight: var(--fw-regular);
     color: var(--text);
+    width: fit-content;
+    align-self: flex-start;
+    padding: 0.3rem 0.65rem;
+    border: 1px solid currentColor;
   }
 
   /* ── Images ──────────────────────────────────────────────────── */

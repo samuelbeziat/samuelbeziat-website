@@ -1,0 +1,135 @@
+---
+import Base from '../layouts/Base.astro';
+import HoloCard from '../components/HoloCard.astro';
+import { withBase } from '../utils/url';
+---
+
+<Base
+  title="Contact — Graphiste à Biarritz (BAB) | Samuel Beziat"
+  description="Disponible pour du freelance et des collaborations en Brand Identity et Props Design, basé à Biarritz (BAB)."
+>
+  <section class="contact">
+
+    <h1 class="sr-only">Contacter Samuel Beziat, graphiste et directeur artistique à Biarritz</h1>
+
+    <div class="contact-card">
+      <HoloCard src={withBase('/images/portrait.jpg')} alt="Samuel Beziat" />
+    </div>
+
+    <div class="contact-text">
+      <p class="contact-lede" data-lang-fr>
+        Disponible pour toute demande de collaboration, projet freelance ou simple question.
+        N'hésitez pas à m'écrire directement&nbsp;:
+      </p>
+      <p class="contact-lede" data-lang-en>
+        Available for collaborations, freelance projects or just a question.
+        Feel free to write directly&nbsp;:
+      </p>
+
+      <a href="mailto:beziatsamuel@gmail.com" class="contact-email">
+        BEZIATSAMUEL@GMAIL.COM
+      </a>
+
+      <div class="contact-actions">
+        <a href="mailto:beziatsamuel@gmail.com" class="contact-btn contact-btn--primary">
+          <span data-lang-fr>ME CONTACTER</span>
+          <span data-lang-en>GET IN TOUCH</span>
+        </a>
+        <a href="https://www.linkedin.com/in/samuel-beziat18/" target="_blank" rel="noopener noreferrer" class="contact-btn">LINKEDIN</a>
+        <a href="https://www.instagram.com/samuelbeziat_" target="_blank" rel="noopener noreferrer" class="contact-btn">INSTAGRAM</a>
+      </div>
+    </div>
+
+  </section>
+</Base>
+
+<style>
+  .contact {
+    min-height: calc(100dvh - var(--header-h));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(2rem, 6vw, 6rem);
+    padding: clamp(3rem, 8vh, 6rem) var(--pad-x);
+  }
+
+  .contact-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 36ch;
+  }
+
+  .contact-lede {
+    font-size: var(--size-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-light);
+    color: var(--text);
+  }
+
+  .contact-email {
+    display: inline-block;
+    margin-top: 1.4rem;
+    font-size: clamp(1rem, 1.8vw, 1.6rem);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-caps);
+    color: var(--accent);
+    transition: opacity var(--t-fast);
+  }
+
+  .contact-email:hover { opacity: 0.7; }
+
+  /* ── CTA : même famille que les pills du header (fond plein, carré) ── */
+
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 2rem;
+  }
+
+  .contact-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.9rem 1.4rem;
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text);
+    font-size: var(--size-header);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-caps);
+    transition: background var(--t-fast), color var(--t-fast);
+  }
+
+  .contact-btn:hover {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .contact-btn--primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .contact-btn--primary:hover {
+    opacity: 0.85;
+  }
+
+  @media (max-width: 768px) {
+    .contact {
+      flex-direction: column;
+      text-align: center;
+      padding-top: clamp(2rem, 5vh, 4rem);
+    }
+
+    .contact-text {
+      align-items: center;
+      max-width: 44ch;
+    }
+
+    .contact-actions {
+      justify-content: center;
+    }
+  }
+</style>

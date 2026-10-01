@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Mentions légales — Samuel Beziat"
+  description="Mentions légales du site samuelbeziat.com : éditeur, hébergeur, propriété intellectuelle, données personnelles."
+>
+  <section class="legal">
+
+    <h1 class="legal-title">Mentions légales</h1>
+
+    <p class="legal-intro">
+      Conformément à l'article 6 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN), voici les informations relatives à l'éditeur et à l'hébergeur du site samuelbeziat.com.
+    </p>
+
+    <h2>Éditeur du site</h2>
+    <p>
+      Samuel Beziat — Entrepreneur individuel (micro-entreprise), graphiste<br />
+      Adresse : 21 Perspective de la Côte des Basques, 64200 Biarritz, France<br />
+      E-mail : <a href="mailto:beziatsamuel@gmail.com">beziatsamuel@gmail.com</a><br />
+      Téléphone : 06 16 83 18 39<br />
+      SIRET : 130 036 213 00010<br />
+      TVA non applicable, art. 293 B du CGI
+    </p>
+
+    <h2>Directeur de la publication</h2>
+    <p>Samuel Beziat</p>
+
+    <h2>Hébergeur</h2>
+    <p>
+      GitHub, Inc. (service GitHub Pages)<br />
+      88 Colin P Kelly Jr Street, San Francisco, CA 94107, États-Unis<br />
+      Téléphone : +1 (877) 448-4820 — <a href="https://github.com" target="_blank" rel="noopener noreferrer">github.com</a>
+    </p>
+
+    <h2>Propriété intellectuelle</h2>
+    <p>
+      L'ensemble des contenus de ce site (créations graphiques, logos, illustrations, animations, textes, images) est protégé par le droit d'auteur. Sauf mention contraire, ils sont la propriété de Samuel Beziat. Les projets réalisés pour des clients sont présentés avec leur accord ; les marques et logos associés restent la propriété de leurs titulaires respectifs.
+    </p>
+    <p>
+      Toute reproduction, représentation ou adaptation, totale ou partielle, sans autorisation écrite préalable est interdite et constitue une contrefaçon (articles L.335-2 et suivants du Code de la propriété intellectuelle).
+    </p>
+
+    <h2>Clientèle</h2>
+    <p>
+      Les prestations proposées sur ce site sont destinées exclusivement aux professionnels et aux associations.
+    </p>
+
+    <h2>Données personnelles et cookies</h2>
+    <p>
+      Ce site ne comporte ni formulaire, ni compte utilisateur, ni outil de statistiques, et ne dépose aucun cookie ni traceur. Aucun bandeau de consentement n'est donc nécessaire.
+    </p>
+    <p>
+      <em>Quand vous m'écrivez.</em> Si vous me contactez à <a href="mailto:beziatsamuel@gmail.com">beziatsamuel@gmail.com</a>, je reçois votre adresse e-mail, votre nom et les informations que vous choisissez de partager. Je les utilise pour vous répondre, établir un devis et suivre notre collaboration. Je conserve aussi vos coordonnées dans un carnet de contacts personnel (clients et personnes intéressées par mon travail).
+    </p>
+    <p>
+      Ces données restent strictement personnelles : elles ne sont ni vendues, ni louées, ni partagées avec des tiers. Base légale : mon intérêt légitime à répondre aux messages et à garder le contact, ou les mesures précontractuelles et l'exécution du contrat pour les clients.
+    </p>
+    <p>
+      Je les conserve 3 ans après notre dernier échange, sauf obligation légale plus longue (10 ans pour les factures). Ma messagerie est fournie par Google (Gmail), qui peut traiter ces données hors de l'Union européenne avec des garanties appropriées.
+    </p>
+    <p>
+      <em>Quand vous visitez le site.</em> L'hébergeur GitHub enregistre des données techniques (adresse IP, navigateur, pages consultées) pour la sécurité et le bon fonctionnement du service. Je n'y ai pas accès et ne les utilise pas.
+    </p>
+    <p>
+      <em>Vos droits.</em> Vous pouvez à tout moment demander l'accès à vos données, leur correction ou leur suppression, ou vous opposer à leur conservation, en écrivant à <a href="mailto:beziatsamuel@gmail.com">beziatsamuel@gmail.com</a>. Je réponds sous un mois. En cas de désaccord, vous pouvez saisir la <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">CNIL</a>.
+    </p>
+    <p class="legal-updated">Dernière mise à jour : 1er octobre 2026</p>
+
+    <h2>Liens externes</h2>
+    <p>
+      Ce site renvoie vers mes profils LinkedIn et Instagram, dont je gère le contenu. Ces plateformes sont exploitées par LinkedIn et Meta, qui appliquent leurs propres conditions d'utilisation et politiques de confidentialité lorsque vous les consultez.
+    </p>
+
+  </section>
+</Base>
+
+<style>
+  .legal {
+    max-width: 68ch;
+    margin: 0 auto;
+    padding: clamp(3rem, 6vh, 6rem) var(--pad-x) var(--section-gap);
+  }
+
+  .legal-title {
+    font-family: var(--font-henry);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-tight);
+    line-height: var(--lh-display);
+    color: var(--text);
+    margin-bottom: 2.5rem;
+  }
+
+  .legal h2 {
+    font-size: var(--size-body);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-caps);
+    color: var(--text);
+    margin-top: 2.4rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .legal p {
+    font-size: var(--size-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-light);
+    color: var(--text);
+  }
+
+  .legal p + p {
+    margin-top: 1rem;
+  }
+
+  .legal-intro {
+    font-weight: var(--fw-regular);
+  }
+
+  .legal a {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    transition: opacity var(--t-fast);
+  }
+
+  .legal a:hover {
+    opacity: 0.6;
+  }
+
+  .legal-updated {
+    margin-top: 1.5rem;
+    opacity: 0.6;
+  }
+</style>

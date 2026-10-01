@@ -13,8 +13,8 @@
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    background: var(--text);
-    color: var(--bg);
+    background: var(--accent);
+    color: var(--accent-ink);
     border: none;
     cursor: pointer;
 
@@ -41,6 +41,7 @@
 
   function applyLang(lang: string) {
     document.documentElement.dataset.lang = lang;
+    document.documentElement.lang = lang;
     localStorage.setItem('sb-lang', lang);
     btn.textContent = lang === 'fr' ? 'FR' : 'EN';
   }

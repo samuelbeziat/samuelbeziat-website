@@ -63,8 +63,13 @@
 :root {
   /* Colors */
   --bg:           #ffffff;
-  --text:         #111111;
-  --text-muted:   #111111; /* tout en noir */
+  --text:         #ed1c24;
+  --text-muted:   #ed1c24; /* tout le texte en rouge */
+  --ink:          #111111; /* surfaces sombres fixes (page contact, pastille langue) — volontairement indépendant de --text */
+
+  /* Flash accent — utilisé avec parcimonie : item de nav actif, bloc CTA footer, liseré */
+  --accent:       #ed1c24;
+  --accent-ink:   #ffffff; /* texte sur fond accent */
 
   /* Font — Light en défaut, variable pour les transitions */
   --font:       'Muoto', 'Helvetica Neue', Arial, sans-serif;
@@ -90,7 +95,7 @@
 
   /* Spacing */
   --pad-x:      clamp(1.2rem, 2.5vw, 2.8rem);
-  --header-h:   2.6rem;
+  --header-h:   3.1rem;
   --section-gap: clamp(4rem, 8vh, 8rem);
 
   /* Letter spacing */
@@ -147,6 +152,20 @@ img {
   display: block;
   max-width: 100%;
   height: auto;
+}
+
+/* ─── Accessible mais invisible : H1 porteur de mots-clés sans impact visuel */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 :focus-visible {

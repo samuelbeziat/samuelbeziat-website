@@ -1,0 +1,136 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  /** Probabilité (0-1) que l'effet holographique s'active pour cette visite. */
+  chance?: number;
+}
+
+const { src, alt, chance = 0.333 } = Astro.props;
+---
+
+<div class="holo-outer">
+  <div class="holo-inner" data-holo-card data-chance={chance}>
+    <img src={src} alt={alt} />
+  </div>
+</div>
+
+<style>
+  .holo-outer {
+    width: min(44vw, 480px);
+    perspective: 900px;
+  }
+
+  .holo-inner {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.08s ease-out;
+    will-change: transform;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18), 0 4px 12px rgba(0, 0, 0, 0.10);
+  }
+
+  /* Overlay holographique ultra kitsch */
+  .holo-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(
+        ellipse 65% 50% at calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%),
+        rgba(255, 255, 255, 0.40) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        transparent 70%
+      ),
+      linear-gradient(
+        var(--holo-angle, 130deg),
+        rgba(255,  60, 110, 0.55)  0%,
+        rgba(255, 170,  40, 0.48) 18%,
+        rgba( 50, 210,  90, 0.48) 36%,
+        rgba( 40, 170, 255, 0.48) 54%,
+        rgba(140,  50, 255, 0.55) 72%,
+        rgba(255,  60, 190, 0.55) 88%,
+        rgba(255,  60, 110, 0.55) 100%
+      );
+    mix-blend-mode: color-dodge;
+    opacity: var(--holo-opacity, 0);
+    transition: opacity 0.6s ease;
+    animation: holo-hue 4s linear infinite;
+  }
+
+  @keyframes holo-hue {
+    from { filter: hue-rotate(0deg)   brightness(1.1); }
+    to   { filter: hue-rotate(360deg) brightness(1.1); }
+  }
+
+  /* Dos de la carte en 3D — visible uniquement quand la carte pivote */
+  .holo-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #d4ccc0;
+    transform: translateZ(-14px);
+    pointer-events: none;
+  }
+
+  .holo-inner img {
+    width: 100%;
+    height: auto;
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 768px) {
+    .holo-outer { width: min(78vw, 360px); }
+  }
+</style>
+
+<script>
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-holo-card]'));
+  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!noMotion && cards.length > 0) {
+    const holoEnabled = cards.map(card => Math.random() < Number(card.dataset.chance || 0.333));
+
+    window.addEventListener('mousemove', (e: MouseEvent) => {
+      const dx = (e.clientX / window.innerWidth  - 0.5) * 2;
+      const dy = (e.clientY / window.innerHeight - 0.5) * 2;
+
+      cards.forEach((card, i) => {
+        card.style.transform = `rotateX(${-dy * 25}deg) rotateY(${dx * 25}deg)`;
+
+        if (holoEnabled[i]) {
+          card.style.setProperty('--mx',           String(e.clientX / window.innerWidth));
+          card.style.setProperty('--my',           String(e.clientY / window.innerHeight));
+          card.style.setProperty('--holo-angle',   `${120 + dx * 65}deg`);
+          card.style.setProperty('--holo-opacity', '0.88');
+        }
+      });
+    });
+
+    window.addEventListener('mouseleave', () => {
+      cards.forEach(card => card.style.setProperty('--holo-opacity', '0'));
+    });
+
+    /* Tilt tactile — même logique avec le doigt */
+    window.addEventListener('touchmove', (e: TouchEvent) => {
+      if (e.touches.length === 0) return;
+      const touch = e.touches[0];
+      const dx = (touch.clientX / window.innerWidth  - 0.5) * 2;
+      const dy = (touch.clientY / window.innerHeight - 0.5) * 2;
+      cards.forEach(card => {
+        card.style.transform = `rotateX(${-dy * 25}deg) rotateY(${dx * 25}deg)`;
+      });
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      cards.forEach(card => {
+        card.style.transition = 'transform 0.4s ease-out';
+        card.style.transform  = 'rotateX(0deg) rotateY(0deg)';
+        setTimeout(() => { card.style.transition = 'transform 0.08s ease-out'; }, 400);
+      });
+    }, { passive: true });
+  }
+</script>
