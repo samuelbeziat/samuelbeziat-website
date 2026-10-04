@@ -16,32 +16,32 @@ order: 1
 blocks:
   - layout: "full"
     images:
-      - src: "/images/vol-de-nuit/1-v.jpg"
+      - src: "/images/vol-de-nuit/1-v.webp"
         alt: "Vol de Nuit — 1-v"
   - layout: "centered"
     images:
-      - src: "/images/vol-de-nuit/1-afa.png"
+      - src: "/images/vol-de-nuit/1-afa.webp"
         alt: "Vol de Nuit — 1-afa"
   - layout: "half-right-natural"
     images:
-      - src: "/images/vol-de-nuit/2-v.jpg"
+      - src: "/images/vol-de-nuit/2-v.webp"
         alt: "Vol de Nuit — 2-v"
   - layout: "centered"
     images:
-      - src: "/images/vol-de-nuit/1-recoleta.png"
+      - src: "/images/vol-de-nuit/1-recoleta.webp"
         alt: "Vol de Nuit — 1-recoleta"
   - layout: "duo-one-third"
     images:
-      - src: "/images/vol-de-nuit/3-v.jpg"
+      - src: "/images/vol-de-nuit/3-v.webp"
         alt: "Vol de Nuit — 3-v"
-      - src: "/images/vol-de-nuit/4-v.jpg"
+      - src: "/images/vol-de-nuit/4-v.webp"
         alt: "Vol de Nuit — 4-v"
   - layout: "half-right-natural"
     images:
-      - src: "/images/vol-de-nuit/5-v.jpg"
+      - src: "/images/vol-de-nuit/5-v.webp"
         alt: "Vol de Nuit — 5-v"
   - layout: "centered"
     images:
-      - src: "/images/vol-de-nuit/1-reste.png"
+      - src: "/images/vol-de-nuit/1-reste.webp"
         alt: "Vol de Nuit — 1-reste"
 ---

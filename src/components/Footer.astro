@@ -26,6 +26,10 @@ const year = new Date().getFullYear();
         <span data-lang-fr>TRAVAUX</span>
         <span data-lang-en>WORK</span>
       </a>
+      <a href={withBase('/peinture-en-lettre')}>
+        <span data-lang-fr>PEINTURE EN LETTRE</span>
+        <span data-lang-en>SIGN PAINTING</span>
+      </a>
       <a href={withBase('/about')}>
         <span data-lang-fr>À PROPOS</span>
         <span data-lang-en>ABOUT</span>
@@ -78,10 +82,11 @@ const year = new Date().getFullYear();
   }
 
   .footer-email {
+    font-family: var(--font-henry);
     font-size: clamp(1.4rem, 2.2vw, 2.3rem);
-    font-weight: var(--fw-bold);
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: var(--ls-caps);
+    letter-spacing: normal;
     display: inline-block;
     margin-top: 0.3em;
     transition: opacity var(--t-fast);

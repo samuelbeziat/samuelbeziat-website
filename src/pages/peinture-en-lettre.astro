@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Peinture en lettre — Samuel Beziat, Biarritz (BAB)"
+  description="Peinture en lettre (sign painting) par Samuel Beziat, graphiste et directeur artistique basé à Biarritz (BAB)."
+>
+  <section class="sign">
+
+    <h1 class="sign-title">
+      <span data-lang-fr>Peinture en lettre</span>
+      <span data-lang-en>Sign painting</span>
+    </h1>
+
+    <p class="sign-wip">W.I.P</p>
+
+  </section>
+</Base>
+
+<style>
+  /* Même gabarit que la page mentions légales */
+  .sign {
+    max-width: 68ch;
+    margin: 0 auto;
+    padding: clamp(3rem, 6vh, 6rem) var(--pad-x) var(--section-gap);
+  }
+
+  .sign-title {
+    font-family: var(--font-henry);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-tight);
+    line-height: var(--lh-display);
+    color: var(--text);
+    margin-bottom: 2.5rem;
+  }
+
+  .sign-wip {
+    font-family: var(--font-henry);
+    font-weight: 400;
+    font-size: clamp(5rem, 22vw, 16rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+</style>

@@ -22,7 +22,7 @@ order: 3
 blocks:
   - layout: "full"
     images:
-      - src: "/images/lacajunte-fc/drapeau.png"
+      - src: "/images/lacajunte-fc/drapeau.webp"
         alt: "Lacajunte FC — drapeau"
   - layout: "full"
     images:
@@ -30,7 +30,7 @@ blocks:
         alt: "Lacajunte FC — logo"
   - layout: "half-right"
     images:
-      - src: "/images/lacajunte-fc/broderie.jpeg"
+      - src: "/images/lacajunte-fc/broderie.webp"
         alt: "Lacajunte FC — broderie"
   - layout: "full"
     images:

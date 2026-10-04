@@ -68,6 +68,14 @@ import Base from '../layouts/Base.astro';
     </p>
     <p class="legal-updated">Dernière mise à jour : 1er octobre 2026</p>
 
+    <h2>Typographies</h2>
+    <p>
+      <em>Chaumont Script</em> — dessinée par Timothée Gouraud et Alexandre Bassi (2021), éditée par l'<a href="https://anrt-nancy.fr/fr/fonts/" target="_blank" rel="noopener noreferrer">ANRT</a> (Atelier national de recherche typographique, Nancy), d'après les lettres peintes de Chantal Jacquet, peintre en lettres à Chaumont dans les années 1980. Distribuée sous licence <a href="https://openfontlicense.org" target="_blank" rel="noopener noreferrer">SIL Open Font License</a>.
+    </p>
+    <p>
+      <em>Basier Square</em> — éditée par <a href="https://www.atipofoundry.com/fonts/basier" target="_blank" rel="noopener noreferrer">Atipo foundry</a> (2018).
+    </p>
+
     <h2>Liens externes</h2>
     <p>
       Ce site renvoie vers mes profils LinkedIn et Instagram, dont je gère le contenu. Ces plateformes sont exploitées par LinkedIn et Meta, qui appliquent leurs propres conditions d'utilisation et politiques de confidentialité lorsque vous les consultez.
@@ -124,6 +132,11 @@ import Base from '../layouts/Base.astro';
     text-decoration: underline;
     text-underline-offset: 0.15em;
     transition: opacity var(--t-fast);
+  }
+
+  .legal a[href^="mailto:"] {
+    font-family: var(--font-henry);
+    font-style: normal;
   }
 
   .legal a:hover {

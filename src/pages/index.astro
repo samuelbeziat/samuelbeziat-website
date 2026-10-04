@@ -86,7 +86,7 @@ const projects = allProjects
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: baseline;
-    line-height: var(--lh-display);
+    line-height: 1.35; /* plus aéré que --lh-display (0.88) pour séparer les noms */
     /*
      * +4px de padding vertical + -4px de margin = la hitbox s'étend au-delà
      * du bord de chaque item et recouvre l'item adjacent.

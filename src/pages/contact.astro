@@ -13,7 +13,7 @@ import { withBase } from '../utils/url';
     <h1 class="sr-only">Contacter Samuel Beziat, graphiste et directeur artistique à Biarritz</h1>
 
     <div class="contact-card">
-      <HoloCard src={withBase('/images/portrait.jpg')} alt="Samuel Beziat" />
+      <HoloCard src={withBase('/images/portrait.webp')} alt="Samuel Beziat" />
     </div>
 
     <div class="contact-text">
@@ -70,10 +70,11 @@ import { withBase } from '../utils/url';
   .contact-email {
     display: inline-block;
     margin-top: 1.4rem;
+    font-family: var(--font-henry);
     font-size: clamp(1rem, 1.8vw, 1.6rem);
-    font-weight: var(--fw-bold);
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: var(--ls-caps);
+    letter-spacing: normal;
     color: var(--accent);
     transition: opacity var(--t-fast);
   }

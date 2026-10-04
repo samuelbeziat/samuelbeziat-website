@@ -4,7 +4,8 @@ import { withBase } from '../utils/url';
 const path = Astro.url.pathname;
 const isAbout   = path.includes('/about');
 const isContact = path.includes('/contact');
-const isWork    = !isAbout && !isContact;
+const isSign    = path.includes('/peinture-en-lettre');
+const isWork    = !isAbout && !isContact && !isSign;
 ---
 
 <header class="site-header">
@@ -19,8 +20,12 @@ const isWork    = !isAbout && !isContact;
       <span data-lang-fr>TRAVAUX</span>
       <span data-lang-en>WORK</span>
     </a>
+    <a href={withBase('/peinture-en-lettre')} class:list={['hd-pill', { 'is-active': isSign }]}>
+      <span data-lang-fr>PEINTURE EN LETTRE</span>
+      <span data-lang-en>SIGN PAINTING</span>
+    </a>
     <a href={withBase('/about')} class:list={['hd-pill', { 'is-active': isAbout }]}>
-      <span data-lang-fr>À PROPOS</span>
+      <span data-lang-fr>À&nbsp;PROPOS</span>
       <span data-lang-en>ABOUT</span>
     </a>
     <a href={withBase('/contact')} class:list={['hd-pill', { 'is-active': isContact }]}>CONTACT</a>
@@ -62,6 +67,13 @@ const isWork    = !isAbout && !isContact;
     flex-shrink: 0;
   }
 
+  .hd-logo-text {
+    font-family: var(--font-henry);
+    font-size: 1.5em;
+    font-weight: 400;
+    letter-spacing: normal;
+  }
+
   /* ── Nav : encarts carrés, fond plein, pas de contour ────────── */
 
   .hd-nav {
@@ -86,11 +98,27 @@ const isWork    = !isAbout && !isContact;
 
   /* ── Mobile ───────────────────────────────────────────────────── */
 
-  @media (max-width: 480px) {
-    .hd-nav { gap: 0.35rem; }
-    .hd-pill { padding: 0.45rem 0.6rem; }
-    /* Le nom complet + les 3 libellés FR ("À PROPOS") ne tiennent plus
-       sur une seule ligne à cette largeur : on ne garde que le picto. */
-    .hd-logo-text { display: none; }
+  /* Nom + 4 boutons ne tiennent plus sur une ligne : le header passe
+     sur deux rangs (logo + nom, puis la nav sur toute la largeur). */
+  @media (max-width: 720px) {
+    .site-header {
+      flex-wrap: wrap;
+      row-gap: 0.6rem;
+    }
+
+    .hd-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.35rem;
+      width: 100%;
+    }
+
+    .hd-pill {
+      justify-content: center;
+      text-align: center;
+      white-space: normal; /* "PEINTURE EN LETTRE" passe sur 2 lignes si besoin */
+      line-height: 1.25;
+      padding: 0.5rem 0.4rem;
+    }
   }
 </style>

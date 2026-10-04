@@ -34,6 +34,12 @@
   .lang-btn:hover {
     opacity: 0.7;
   }
+
+  /* S'efface quand il passe par-dessus un lien du footer */
+  .lang-btn.is-covering {
+    opacity: 0;
+    pointer-events: none;
+  }
 </style>
 
 <script>
@@ -53,4 +59,36 @@
     const next = document.documentElement.dataset.lang === 'fr' ? 'en' : 'fr';
     applyLang(next);
   });
+
+  /* ── Masquage au-dessus du footer ──────────────────────────────
+   * Le bouton est fixe : en scrollant, il passe sur les liens du footer.
+   * On le cache uniquement quand il chevauche réellement un lien
+   * (marge de 6px), il revient dès que la zone est libre.
+   */
+  const footerTargets = Array.from(
+    document.querySelectorAll<HTMLElement>('.footer-links a, .footer-links span'),
+  );
+  let ticking = false;
+
+  function checkOverlap() {
+    ticking = false;
+    const b = btn.getBoundingClientRect();
+    const m = 6;
+    const covering = footerTargets.some(el => {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0) return false; // libellé de l'autre langue (masqué)
+      return r.left < b.right + m && r.right > b.left - m
+          && r.top < b.bottom + m && r.bottom > b.top - m;
+    });
+    btn.classList.toggle('is-covering', covering);
+  }
+
+  function requestCheck() {
+    if (!ticking) { ticking = true; requestAnimationFrame(checkOverlap); }
+  }
+
+  window.addEventListener('scroll', requestCheck, { passive: true });
+  window.addEventListener('resize', requestCheck);
+  btn.addEventListener('click', requestCheck);
+  requestCheck();
 </script>
