@@ -15,7 +15,11 @@ const isWork    = !isAbout && !isContact && !isSign;
     <span class="hd-logo-text">SAMUEL BEZIAT</span>
   </a>
 
-  <nav class="hd-nav">
+  <button class="hd-burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="hd-nav">
+    <span></span><span></span><span></span>
+  </button>
+
+  <nav class="hd-nav" id="hd-nav">
     <a href={withBase('/')} class:list={['hd-pill', { 'is-active': isWork }]}>
       <span data-lang-fr>TRAVAUX</span>
       <span data-lang-en>WORK</span>
@@ -96,29 +100,95 @@ const isWork    = !isAbout && !isContact && !isSign;
     color: var(--accent-ink);
   }
 
+  /* ── Burger (mobile uniquement) ─────────────────────────────── */
+
+  .hd-burger {
+    display: none;
+  }
+
   /* ── Mobile ───────────────────────────────────────────────────── */
 
-  /* Nom + 4 boutons ne tiennent plus sur une ligne : le header passe
-     sur deux rangs (logo + nom, puis la nav sur toute la largeur). */
+  /* Nom + 4 boutons ne tiennent pas sur une ligne : logo + nom à gauche,
+     burger à droite, la nav devient un menu déroulant rouge. */
   @media (max-width: 720px) {
-    .site-header {
-      flex-wrap: wrap;
-      row-gap: 0.6rem;
+    .hd-burger {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 2.6rem;
+      height: 2.6rem;
+      padding: 0 0.65rem;
+      background: var(--accent);
+      border: none;
+      cursor: pointer;
     }
 
+    .hd-burger span {
+      display: block;
+      height: 2px;
+      background: var(--accent-ink);
+      transition: transform var(--t-fast), opacity var(--t-fast);
+    }
+
+    .site-header.is-open .hd-burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .site-header.is-open .hd-burger span:nth-child(2) { opacity: 0; }
+    .site-header.is-open .hd-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
     .hd-nav {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.35rem;
-      width: 100%;
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      gap: 0;
+      background: var(--accent);
+      padding: 0.5rem var(--pad-x) 1rem;
+    }
+
+    .site-header.is-open .hd-nav {
+      display: flex;
     }
 
     .hd-pill {
-      justify-content: center;
-      text-align: center;
-      white-space: normal; /* "PEINTURE EN LETTRE" passe sur 2 lignes si besoin */
-      line-height: 1.25;
-      padding: 0.5rem 0.4rem;
+      background: none;
+      color: var(--accent-ink);
+      font-size: 1.4em;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .hd-pill:last-child {
+      border-bottom: none;
+    }
+
+    .hd-pill:hover,
+    .hd-pill.is-active {
+      background: none;
+      color: var(--accent-ink);
+    }
+
+    .hd-pill.is-active {
+      text-decoration: underline;
+      text-underline-offset: 0.3em;
     }
   }
 </style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('.site-header');
+  const burger = header?.querySelector<HTMLButtonElement>('.hd-burger');
+
+  if (header && burger) {
+    const setOpen = (open: boolean) => {
+      header.classList.toggle('is-open', open);
+      burger.setAttribute('aria-expanded', String(open));
+    };
+
+    burger.addEventListener('click', () => setOpen(!header.classList.contains('is-open')));
+    header.querySelectorAll('.hd-pill').forEach(a => a.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+    document.addEventListener('click', e => { if (!header.contains(e.target as Node)) setOpen(false); });
+  }
+</script>

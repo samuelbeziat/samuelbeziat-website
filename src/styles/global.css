@@ -85,10 +85,6 @@
   --t-slow: 480ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Header sur deux rangs en dessous de 720px (voir Header.astro) */
-@media (max-width: 720px) {
-  :root { --header-h: 5.6rem; }
-}
 
 /* ─── Reset ──────────────────────────────────────────────────── */
 
