@@ -172,17 +172,35 @@ const { src, alt, chance = 0.333 } = Astro.props;
         }
       };
 
-      const start = () => window.addEventListener('deviceorientation', onOrient);
+      // On écoute tout de suite : Android envoie les données sans rien demander,
+      // iOS commence à les envoyer une fois l'autorisation accordée.
+      window.addEventListener('deviceorientation', onOrient);
 
+      // iOS (et Chrome récent) exposent requestPermission, qui exige un geste.
+      // Un scroll ne compte pas comme geste (demande rejetée) : on réessaie au
+      // toucher suivant tant que l'utilisateur n'a pas répondu.
       const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
       if (typeof DOE.requestPermission === 'function') {
-        const ask = () => {
+        let asking = false;
+        const stopAsking = () => {
           document.removeEventListener('touchend', ask);
-          DOE.requestPermission!().then(state => { if (state === 'granted') start(); }).catch(() => {});
+          document.removeEventListener('click', ask);
+        };
+        const ask = () => {
+          if (gyroActive) { stopAsking(); return; } // déjà des données, inutile de demander
+          if (asking) return;
+          asking = true;
+          DOE.requestPermission!()
+            .then(state => {
+              stopAsking();
+              // Ré-abonnement par sécurité (sans doublon, même fonction)
+              if (state === 'granted') window.addEventListener('deviceorientation', onOrient);
+            })
+            .catch(() => {})
+            .finally(() => { asking = false; });
         };
         document.addEventListener('touchend', ask);
-      } else {
-        start();
+        document.addEventListener('click', ask);
       }
 
       document.addEventListener('visibilitychange', () => {
