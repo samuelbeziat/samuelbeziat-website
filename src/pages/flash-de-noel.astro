@@ -68,6 +68,10 @@ const items = await Promise.all(flashs.map(async (f) => ({
 
           <div class="flash-info">
             <h2 class="flash-name">{item.title}</h2>
+            <p class="flash-sizes-note">
+              <span data-lang-fr>Largeur · hauteur proportionnelle</span>
+              <span data-lang-en>Width · height to scale</span>
+            </p>
             <ul class="flash-sizes">
               {item.sizes.map((size) => (
                 <li><span>{size.label}</span><span>{size.price}&nbsp;€</span></li>
@@ -109,6 +113,10 @@ const items = await Promise.all(flashs.map(async (f) => ({
 
       <div class="fm-info">
         <h2 class="fm-title flash-name" id="fm-title"></h2>
+        <p class="flash-sizes-note">
+          <span data-lang-fr>Largeur · hauteur proportionnelle</span>
+          <span data-lang-en>Width · height to scale</span>
+        </p>
         <ul class="fm-sizes flash-sizes"></ul>
         <a class="fm-cta flash-cta" href="#">
           <span data-lang-fr>Prendre rendez-vous</span>
@@ -290,6 +298,14 @@ const items = await Promise.all(flashs.map(async (f) => ({
     text-transform: uppercase;
     line-height: 1;
     margin-bottom: 0.8rem;
+  }
+
+  .flash-sizes-note {
+    font-size: var(--size-header);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-caps);
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
   }
 
   .flash-sizes {

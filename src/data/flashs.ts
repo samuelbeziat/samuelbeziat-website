@@ -15,7 +15,7 @@ export interface FlashImage {
 }
 
 export interface FlashSize {
-  label: string;   // ex. "60 × 40 cm"
+  label: string;   // largeur, ex. "50 cm" (la hauteur suit les proportions du modèle)
   price: number;   // en euros
 }
 
@@ -26,11 +26,11 @@ export interface Flash {
   reserve?: boolean; // true → grisé + tampon "Réservé", plus de bouton
 }
 
-// Formats par défaut (provisoires, à ajuster)
+// Formats par défaut : largeur, hauteur proportionnelle au modèle
 const SIZES: FlashSize[] = [
-  { label: 'S — 50 × 35 cm',  price: 50 },
-  { label: 'M — 80 × 55 cm',  price: 75 },
-  { label: 'L — 110 × 75 cm', price: 100 },
+  { label: 'S — 30 cm',  price: 50 },
+  { label: 'M — 50 cm',  price: 80 },
+  { label: 'L — 100 cm', price: 150 },
 ];
 
 // Réglages par numéro de modèle, ex. { 2: { reserve: true }, 4: { sizes: [...] } }
