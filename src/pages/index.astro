@@ -2,11 +2,18 @@
 import Base from '../layouts/Base.astro';
 import { withBase } from '../utils/url';
 import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import { flashs } from '../data/flashs';
 
 const allProjects = await getCollection('projects');
 const projects = allProjects
   .filter((p) => !p.data.hidden)
   .sort((a, b) => a.data.order - b.data.order);
+
+// Flash de Noël : entrée spéciale en fin de liste, aperçu = 1er visuel de chaque modèle
+const flashPreviews = await Promise.all(
+  flashs.map(async (f) => (await getImage({ src: f.images[0].src, width: 1200, format: 'webp' })).src),
+);
 ---
 
 <Base
@@ -36,7 +43,21 @@ const projects = allProjects
 
         </li>
       ))}
+
+      <li class="project-item project-item--flash" data-slug="flash-de-noel">
+        <span class="project-year" aria-hidden="true">{new Date().getFullYear()}</span>
+        <a href={withBase('/flash-de-noel')} class="project-name" aria-label="Voir Flash de Noël">
+          Flash de Noël
+        </a>
+        <span class="project-tags" aria-hidden="true">Peinture vitrine — Édition Noël</span>
+      </li>
     </ul>
+
+    <div class="preview-bg" data-slug="flash-de-noel" aria-hidden="true">
+      {flashPreviews.map((src) => (
+        <img data-src={src} alt="" class="preview-bg-media" loading="lazy" decoding="async" />
+      ))}
+    </div>
 
     {projects.map((project) => {
       const isVideo = (src: string) => /\.(mp4|webm|mov|ogg)$/i.test(src);
@@ -96,6 +117,11 @@ const projects = allProjects
     margin-block: -4px;
     position: relative;
     z-index: 0;
+  }
+
+  /* Flash de Noël : même comportement, en vert sapin pour ressortir */
+  .project-item--flash {
+    --text: #184838;
   }
 
   .project-year {

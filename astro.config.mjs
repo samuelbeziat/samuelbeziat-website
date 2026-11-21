@@ -4,7 +4,8 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://samuelbeziat.com',
   base: '/',
-  integrations: [sitemap()],
+  // /flash-de-noel : page cachée, hors sitemap
+  integrations: [sitemap({ filter: (page) => !page.includes('/flash-de-noel') })],
   legacy: {
     collections: true,
   },

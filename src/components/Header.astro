@@ -5,7 +5,8 @@ const path = Astro.url.pathname;
 const isAbout   = path.includes('/about');
 const isContact = path.includes('/contact');
 const isSign    = path.includes('/peinture-en-lettre');
-const isWork    = !isAbout && !isContact && !isSign;
+const isFlash   = path.includes('/flash-de-noel');
+const isWork    = !isAbout && !isContact && !isSign && !isFlash;
 ---
 
 <header class="site-header">

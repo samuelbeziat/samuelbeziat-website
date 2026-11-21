@@ -10,12 +10,14 @@ interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  noindex?: boolean;
 }
 
 const {
   title,
   description = 'Samuel Beziat, graphiste et directeur artistique basé à Biarritz (BAB). Identité de marque, props design et univers graphiques sur mesure.',
   ogImage = withBase('/images/portrait.jpg'),
+  noindex = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -49,6 +51,7 @@ const personSchema = {
     <meta name="description" content={description} />
     <meta name="google-site-verification" content="QidmhfnndCAdnQRej9gEvpFnW0AVXtDmvoYJfKbMbpA" />
     <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:title"       content={title} />
     <meta property="og:description" content={description} />
